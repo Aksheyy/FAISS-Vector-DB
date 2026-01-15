@@ -1,0 +1,173 @@
+{
+    "schema_version": "1.0.0",
+    "rfp_id": "91ddaed3-c1ce-44b6-b49a-45b26b560115",
+    "customer_name": "Changi Airport Group",
+    "industry": "Retail POS",
+    "region": "Singapore",
+    "requirements": [
+        {
+            "id": "POS-FR-001",
+            "raw_text": "The proposed POS solution must minimally meet the capabilities of critical functions and features that exist in the existing POS frontend and backend solution.",
+            "normalized_text": "POS must meet or exceed existing frontend and backend functional capabilities",
+            "confidence_score": 0.91,
+            "status": "draft",
+            "action": {
+                "verb": "meet",
+                "modality": "must"
+            },
+            "object": {
+                "primary": "POS functional capabilities"
+            },
+            "constraint": {
+                "type": "functional",
+                "description": "Additional constraint info if needed"
+            }
+        },
+        {
+            "id": "POS-FR-002",
+            "raw_text": "The POS solution must support Cashier and Self-Checkout POS UI customized to tenant requirements including boarding pass scanning.",
+            "normalized_text": "Support customized Cashier and Self-Checkout POS UI including boarding pass scanning",
+            "confidence_score": 0.93,
+            "status": "draft",
+            "action": {
+                "verb": "support",
+                "modality": "must"
+            },
+            "object": {
+                "primary": "POS user interface",
+                "secondary": [
+                    "cashier",
+                    "self-checkout"
+                ]
+            },
+            "constraint": {
+                "type": "functional",
+                "description": "Additional constraint info if needed"
+            }
+        },
+        {
+            "id": "POS-FR-003",
+            "raw_text": "The system should support offline mode and synchronize transactions when connectivity resumes.",
+            "normalized_text": "Operate POS in offline mode with deferred synchronization",
+            "confidence_score": 0.94,
+            "status": "draft",
+            "action": {
+                "verb": "operate",
+                "modality": "should"
+            },
+            "object": {
+                "primary": "offline transaction processing"
+            },
+            "constraint": {
+                "type": "resilience",
+                "description": "Additional constraint info if needed"
+            }
+        },
+        {
+            "id": "POS-FR-004",
+            "raw_text": "The POS must support duty-free liquor allowance checks and GST toggling for traveler and non-traveler transactions.",
+            "normalized_text": "Support duty-free allowance checks and GST toggling based on traveler status",
+            "confidence_score": 0.95,
+            "status": "draft",
+            "action": {
+                "verb": "support",
+                "modality": "must"
+            },
+            "object": {
+                "primary": "tax and duty processing"
+            }
+        },
+        {
+            "id": "POS-FR-005",
+            "raw_text": "The system shall integrate with Changi Rewards loyalty system for points earning and voucher redemption.",
+            "normalized_text": "Integrate POS with Changi Rewards for loyalty earning and redemption",
+            "confidence_score": 0.92,
+            "status": "draft",
+            "action": {
+                "verb": "integrate",
+                "modality": "shall"
+            },
+            "object": {
+                "primary": "loyalty integration"
+            }
+        },
+        {
+            "id": "POS-FR-006",
+            "raw_text": "The POS solution shall integrate with CAG appointed digital payment providers such as ChangiPay.",
+            "normalized_text": "Integrate POS with CAG-appointed digital payment providers",
+            "confidence_score": 0.93,
+            "status": "draft",
+            "action": {
+                "verb": "integrate",
+                "modality": "shall"
+            },
+            "object": {
+                "primary": "digital payments"
+            }
+        },
+        {
+            "id": "POS-FR-007",
+            "raw_text": "The POS must support configurable restrictions on sale of age-restricted and regulated products.",
+            "normalized_text": "Support configurable regulatory restrictions on product sales",
+            "confidence_score": 0.94,
+            "status": "draft",
+            "action": {
+                "verb": "support",
+                "modality": "must"
+            },
+            "object": {
+                "primary": "product sale restrictions"
+            },
+            "constraint": {
+                "type": "compliance",
+                "description": "Additional constraint info if needed"
+            }
+        },
+        {
+            "id": "POS-FR-008",
+            "raw_text": "The system shall automatically apply promotions and campaigns configured by tenants or CAG.",
+            "normalized_text": "Automatically apply tenant and CAG promotions and campaigns",
+            "confidence_score": 0.9,
+            "status": "draft",
+            "action": {
+                "verb": "apply",
+                "modality": "shall"
+            },
+            "object": {
+                "primary": "promotions and campaigns"
+            }
+        },
+        {
+            "id": "POS-FR-009",
+            "raw_text": "The POS frontend shall allow sales and refund transactions to be completed quickly to support retail operations.",
+            "normalized_text": "Enable fast completion of sales and refund transactions",
+            "confidence_score": 0.88,
+            "status": "draft",
+            "action": {
+                "verb": "enable",
+                "modality": "shall"
+            },
+            "object": {
+                "primary": "transaction performance"
+            }
+        },
+        {
+            "id": "POS-FR-010",
+            "raw_text": "The system shall log and audit all POS user activities including sales, refunds, voids, and logins.",
+            "normalized_text": "Audit all POS user activities",
+            "confidence_score": 0.96,
+            "status": "draft",
+            "action": {
+                "verb": "audit",
+                "modality": "shall"
+            },
+            "object": {
+                "primary": "POS user activities"
+            },
+            "constraint": {
+                "type": "security",
+                "description": "Additional constraint info if needed"
+            }
+        }
+    ]
+}
