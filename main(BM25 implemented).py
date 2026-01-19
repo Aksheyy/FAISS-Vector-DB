@@ -1,95 +1,166 @@
 
 import json
+import re
 import numpy as np
 import faiss
+from rank_bm25 import BM25Okapi
 from openai import AzureOpenAI
 from config import AZURE_API_KEY, AZURE_ENDPOINT, AZURE_DEPLOYMENT
-from rank_bm25 import BM25Okapi
 
-# Initialize Azure OpenAI client
+# =========================================================
+# Azure OpenAI Client
+# =========================================================
 client = AzureOpenAI(
     api_key=AZURE_API_KEY,
     azure_endpoint=AZURE_ENDPOINT,
     api_version="2024-02-15-preview"
 )
 
-# ✅ Connection Test
-try:
-    test_response = client.embeddings.create(model=AZURE_DEPLOYMENT, input="Connection test")
-    print("✅ Azure OpenAI connection successful!")
-except Exception as e:
-    print("❌ Connection failed:", e)
-    exit()
-
-# ✅ Load requirements
-with open("requirements.json", "r") as f:
+# =========================================================
+# Load Requirements
+# =========================================================
+with open("requirements.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 
-requirements = data["requirements"]
+requirements = [
+    r for r in data.get("requirements", [])
+    if r.get("raw_text") and r.get("normalized_text")
+]
 
-# Use raw_text for better context
-texts = [req["raw_text"] for req in requirements]
-ids = [req["id"] for req in requirements]
+# =========================================================
+# Helper Functions
+# =========================================================
+def clean(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9\s]", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
 
-# ✅ Generate embeddings
-embeddings = []
-for text in texts:
-    response = client.embeddings.create(model=AZURE_DEPLOYMENT, input=text)
-    embeddings.append(response.data[0].embedding)
+def tokenize(text: str):
+    return clean(text).split()
 
-# ✅ Convert to NumPy and normalize for cosine similarity
-embeddings = np.array(embeddings).astype("float32")
+def build_embedding_text(req: dict) -> str:
+    return f"""
+    Requirement: {req.get('normalized_text', '')}
+    Description: {req.get('raw_text', '')}
+    Action: {req.get('action', {}).get('verb', '')}
+            ({req.get('action', {}).get('modality', '')})
+    Object: {req.get('object', {}).get('primary', '')}
+    Category: {req.get('constraint', {}).get('type', 'unknown')}
+    Context: Airport Retail POS
+    """
+
+def build_bm25_text(req: dict) -> str:
+    return " ".join([
+        req.get("normalized_text", ""),
+        req.get("object", {}).get("primary", ""),
+        req.get("constraint", {}).get("type", "")
+    ])
+
+def infer_constraint_boost(query: str):
+    q = query.lower()
+    if any(w in q for w in ["offline", "outage", "network", "disconnect"]):
+        return "resilience"
+    if any(w in q for w in ["gst", "tax", "regulation", "compliance"]):
+        return "compliance"
+    if any(w in q for w in ["security", "access", "encrypt", "audit"]):
+        return "security"
+    if any(w in q for w in ["report", "analytics"]):
+        return "reporting"
+    if any(w in q for w in ["payment", "refund", "wallet", "currency"]):
+        return "functional"
+    return None
+
+# =========================================================
+# Build Documents
+# =========================================================
+embedding_docs = [build_embedding_text(r) for r in requirements]
+bm25_docs = [build_bm25_text(r) for r in requirements]
+ids = [r.get("id") for r in requirements]
+
+# =========================================================
+# Create Embeddings (Batch)
+# =========================================================
+response = client.embeddings.create(
+    model=AZURE_DEPLOYMENT,
+    input=embedding_docs
+)
+
+embeddings = np.array(
+    [e.embedding for e in response.data],
+    dtype="float32"
+)
+
 faiss.normalize_L2(embeddings)
 
-# ✅ Create FAISS index
-dimension = len(embeddings[0])
+# =========================================================
+# FAISS Index
+# =========================================================
+dimension = embeddings.shape[1]
 index = faiss.IndexFlatIP(dimension)
 index.add(embeddings)
 
-# ✅ Save FAISS index
-faiss.write_index(index, "faiss_index.bin")
+# =========================================================
+# BM25 Index
+# =========================================================
+bm25 = BM25Okapi([tokenize(t) for t in bm25_docs])
 
-# ✅ Save metadata
-with open("metadata.json", "w") as f:
-    json.dump({"ids": ids, "texts": texts}, f)
+# =========================================================
+# Hybrid Search
+# =========================================================
+def hybrid_search(query, top_k=5, alpha=0.7):
+    beta = 1 - alpha
 
-# ✅ Prepare BM25
-tokenized_texts = [text.lower().split() for text in texts]
-bm25 = BM25Okapi(tokenized_texts)
+    # ---- Vector Search ----
+    q_embedding = client.embeddings.create(
+        model=AZURE_DEPLOYMENT,
+        input=query
+    ).data[0].embedding
 
-# ✅ Query
-query = "POS should allow offline transactions"
-query_embedding = client.embeddings.create(model=AZURE_DEPLOYMENT, input=query).data[0].embedding
-query_vector = np.array([query_embedding]).astype("float32")
-faiss.normalize_L2(query_vector)
+    q_vector = np.array([q_embedding], dtype="float32")
+    faiss.normalize_L2(q_vector)
 
-# ✅ FAISS Search
-faiss_distances, faiss_indices = index.search(query_vector, k=10)
+    faiss_scores, faiss_indices = index.search(q_vector, top_k)
 
-# ✅ BM25 Search
-tokenized_query = query.lower().split()
-bm25_scores = bm25.get_scores(tokenized_query)
+    # ---- BM25 Search ----
+    bm25_scores = np.array(bm25.get_scores(tokenize(query)))
+    bm25_scores = (bm25_scores - bm25_scores.min()) / (
+        bm25_scores.max() - bm25_scores.min() + 1e-9
+    )
 
-# ✅ Normalize BM25 scores (Min-Max)
-bm25_min = min(bm25_scores)
-bm25_max = max(bm25_scores)
-bm25_normalized = [(score - bm25_min) / (bm25_max - bm25_min) if bm25_max != bm25_min else 0 for score in bm25_scores]
+    # ---- Intent Boost ----
+    constraint_hint = infer_constraint_boost(query)
 
-# ✅ Combine Scores (Hybrid)
-alpha = 0.6  # weight for FAISS
-beta = 0.4   # weight for BM25
-combined_scores = {}
+    results = []
+    for rank, idx in enumerate(faiss_indices[0]):
+        score = (
+            alpha * faiss_scores[0][rank]
+            + beta * bm25_scores[idx]
+        )
 
-for i in range(len(texts)):
-    semantic_score = 0
-    if i in faiss_indices[0]:
-        semantic_score = faiss_distances[0][list(faiss_indices[0]).index(i)]
-    combined_scores[i] = alpha * semantic_score + beta * bm25_normalized[i]
+        # Boost by constraint type
+        if constraint_hint and requirements[idx].get("constraint", {}).get("type") == constraint_hint:
+            score *= 1.15
 
-# ✅ Sort by combined score
-sorted_results = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)[:3]
+        # Boost MUST requirements
+        if requirements[idx].get("action", {}).get("modality") == "must":
+            score *= 1.10
 
-# ✅ Display Results
-print("\nTop Hybrid Matches:")
-for rank, (idx, score) in enumerate(sorted_results):
-    print(f"{rank+1}. {ids[idx]}: {texts[idx]} (Score: {score:.4f})")
+        # Confidence weighting
+        score *= requirements[idx].get("confidence_score", 1.0)
+
+        results.append((idx, score))
+
+    return sorted(results, key=lambda x: x[1], reverse=True)
+
+# =========================================================
+# Run Example Query
+# =========================================================
+query = "offline transactions"
+results = hybrid_search(query, top_k=4)
+
+print("\n✅ Top Hybrid Search Results:\n")
+for rank, (idx, score) in enumerate(results, 1):
+    r = requirements[idx]
+    print(f"{rank}. {r['id']} — {r['normalized_text']}")
+    print(f"   Category: {r.get('constraint', {}).get('type')}")
+    print("")

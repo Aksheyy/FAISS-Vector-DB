@@ -1,173 +1,155 @@
+
 {
-    "schema_version": "1.0.0",
-    "rfp_id": "91ddaed3-c1ce-44b6-b49a-45b26b560115",
-    "customer_name": "Changi Airport Group",
-    "industry": "Retail POS",
-    "region": "Singapore",
-    "requirements": [
-        {
-            "id": "POS-FR-001",
-            "raw_text": "The proposed POS solution must minimally meet the capabilities of critical functions and features that exist in the existing POS frontend and backend solution.",
-            "normalized_text": "POS must meet or exceed existing frontend and backend functional capabilities",
-            "confidence_score": 0.91,
-            "status": "draft",
-            "action": {
-                "verb": "meet",
-                "modality": "must"
-            },
-            "object": {
-                "primary": "POS functional capabilities"
-            },
-            "constraint": {
-                "type": "functional",
-                "description": "Additional constraint info if needed"
-            }
-        },
-        {
-            "id": "POS-FR-002",
-            "raw_text": "The POS solution must support Cashier and Self-Checkout POS UI customized to tenant requirements including boarding pass scanning.",
-            "normalized_text": "Support customized Cashier and Self-Checkout POS UI including boarding pass scanning",
-            "confidence_score": 0.93,
-            "status": "draft",
-            "action": {
-                "verb": "support",
-                "modality": "must"
-            },
-            "object": {
-                "primary": "POS user interface",
-                "secondary": [
-                    "cashier",
-                    "self-checkout"
-                ]
-            },
-            "constraint": {
-                "type": "functional",
-                "description": "Additional constraint info if needed"
-            }
-        },
-        {
-            "id": "POS-FR-003",
-            "raw_text": "The system should support offline mode and synchronize transactions when connectivity resumes.",
-            "normalized_text": "Operate POS in offline mode with deferred synchronization",
-            "confidence_score": 0.94,
-            "status": "draft",
-            "action": {
-                "verb": "operate",
-                "modality": "should"
-            },
-            "object": {
-                "primary": "offline transaction processing"
-            },
-            "constraint": {
-                "type": "resilience",
-                "description": "Additional constraint info if needed"
-            }
-        },
-        {
-            "id": "POS-FR-004",
-            "raw_text": "The POS must support duty-free liquor allowance checks and GST toggling for traveler and non-traveler transactions.",
-            "normalized_text": "Support duty-free allowance checks and GST toggling based on traveler status",
-            "confidence_score": 0.95,
-            "status": "draft",
-            "action": {
-                "verb": "support",
-                "modality": "must"
-            },
-            "object": {
-                "primary": "tax and duty processing"
-            }
-        },
-        {
-            "id": "POS-FR-005",
-            "raw_text": "The system shall integrate with Changi Rewards loyalty system for points earning and voucher redemption.",
-            "normalized_text": "Integrate POS with Changi Rewards for loyalty earning and redemption",
-            "confidence_score": 0.92,
-            "status": "draft",
-            "action": {
-                "verb": "integrate",
-                "modality": "shall"
-            },
-            "object": {
-                "primary": "loyalty integration"
-            }
-        },
-        {
-            "id": "POS-FR-006",
-            "raw_text": "The POS solution shall integrate with CAG appointed digital payment providers such as ChangiPay.",
-            "normalized_text": "Integrate POS with CAG-appointed digital payment providers",
-            "confidence_score": 0.93,
-            "status": "draft",
-            "action": {
-                "verb": "integrate",
-                "modality": "shall"
-            },
-            "object": {
-                "primary": "digital payments"
-            }
-        },
-        {
-            "id": "POS-FR-007",
-            "raw_text": "The POS must support configurable restrictions on sale of age-restricted and regulated products.",
-            "normalized_text": "Support configurable regulatory restrictions on product sales",
-            "confidence_score": 0.94,
-            "status": "draft",
-            "action": {
-                "verb": "support",
-                "modality": "must"
-            },
-            "object": {
-                "primary": "product sale restrictions"
-            },
-            "constraint": {
-                "type": "compliance",
-                "description": "Additional constraint info if needed"
-            }
-        },
-        {
-            "id": "POS-FR-008",
-            "raw_text": "The system shall automatically apply promotions and campaigns configured by tenants or CAG.",
-            "normalized_text": "Automatically apply tenant and CAG promotions and campaigns",
-            "confidence_score": 0.9,
-            "status": "draft",
-            "action": {
-                "verb": "apply",
-                "modality": "shall"
-            },
-            "object": {
-                "primary": "promotions and campaigns"
-            }
-        },
-        {
-            "id": "POS-FR-009",
-            "raw_text": "The POS frontend shall allow sales and refund transactions to be completed quickly to support retail operations.",
-            "normalized_text": "Enable fast completion of sales and refund transactions",
-            "confidence_score": 0.88,
-            "status": "draft",
-            "action": {
-                "verb": "enable",
-                "modality": "shall"
-            },
-            "object": {
-                "primary": "transaction performance"
-            }
-        },
-        {
-            "id": "POS-FR-010",
-            "raw_text": "The system shall log and audit all POS user activities including sales, refunds, voids, and logins.",
-            "normalized_text": "Audit all POS user activities",
-            "confidence_score": 0.96,
-            "status": "draft",
-            "action": {
-                "verb": "audit",
-                "modality": "shall"
-            },
-            "object": {
-                "primary": "POS user activities"
-            },
-            "constraint": {
-                "type": "security",
-                "description": "Additional constraint info if needed"
-            }
-        }
-    ]
+  "schema_version": "1.0.0",
+  "rfp_id": "91ddaed3-c1ce-44b6-b49a-45b26b560115",
+  "customer_name": "Changi Airport Group",
+  "industry": "Retail POS",
+  "region": "Singapore",
+  "requirements": [
+    {
+      "id": "POS-FR-001",
+      "raw_text": "The POS solution must support multi-terminal operations per retail outlet.",
+      "normalized_text": "Support multiple POS terminals per outlet",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "support", "modality": "must" },
+      "object": { "primary": "multi-terminal operations" },
+      "constraint": { "type": "functional", "description": "Airport retail POS requirement" }
+    },
+    {
+      "id": "POS-FR-002",
+      "raw_text": "The POS should allow centralized configuration of menus, pricing, and taxes.",
+      "normalized_text": "Allow centralized POS configuration",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "allow", "modality": "should" },
+      "object": { "primary": "centralized configuration" },
+      "constraint": { "type": "operational", "description": "Airport retail POS requirement" }
+    },
+    {
+      "id": "POS-FR-003",
+      "raw_text": "The system must handle high transaction throughput during peak airport hours.",
+      "normalized_text": "Handle peak-hour transaction volumes",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "handle", "modality": "must" },
+      "object": { "primary": "transaction throughput" },
+      "constraint": { "type": "performance", "description": "Airport retail POS requirement" }
+    },
+    {
+      "id": "POS-FR-004",
+      "raw_text": "The POS should maintain acceptable performance during flight delay surges.",
+      "normalized_text": "Maintain performance during transaction surges",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "maintain", "modality": "should" },
+      "object": { "primary": "system performance" },
+      "constraint": { "type": "performance", "description": "Airport retail POS requirement" }
+    },
+    {
+      "id": "POS-FR-005",
+      "raw_text": "The POS must support multiple currencies commonly used by international travelers.",
+      "normalized_text": "Support multi-currency transactions",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "support", "modality": "must" },
+      "object": { "primary": "multi-currency processing" },
+      "constraint": { "type": "functional", "description": "Airport retail POS requirement" }
+    },
+
+    {
+      "id": "POS-FR-023",
+      "raw_text": "The POS must continue sales operations during temporary network outages.",
+      "normalized_text": "Continue sales during network outages",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "continue", "modality": "must" },
+      "object": { "primary": "offline operations" },
+      "constraint": { "type": "operational", "description": "Airport retail POS requirement" }
+    },
+    {
+      "id": "POS-FR-024",
+      "raw_text": "The POS should queue transactions locally when offline.",
+      "normalized_text": "Queue transactions locally in offline mode",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "queue", "modality": "should" },
+      "object": { "primary": "offline transaction queue" },
+      "constraint": { "type": "operational", "description": "Airport retail POS requirement" }
+    },
+    {
+      "id": "POS-FR-025",
+      "raw_text": "The system shall synchronize queued transactions once connectivity is restored.",
+      "normalized_text": "Synchronize offline transactions when online",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "synchronize", "modality": "shall" },
+      "object": { "primary": "transaction synchronization" },
+      "constraint": { "type": "operational", "description": "Airport retail POS requirement" }
+    },
+    {
+      "id": "POS-FR-026",
+      "raw_text": "The POS should reconcile offline and online transaction data automatically.",
+      "normalized_text": "Automatically reconcile offline transactions",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "reconcile", "modality": "should" },
+      "object": { "primary": "transaction reconciliation" },
+      "constraint": { "type": "operational", "description": "Airport retail POS requirement" }
+    },
+
+    {
+      "id": "POS-FR-034",
+      "raw_text": "The POS should provide daily sales reports per outlet.",
+      "normalized_text": "Provide daily sales reports",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "provide", "modality": "should" },
+      "object": { "primary": "sales reporting" },
+      "constraint": { "type": "operational", "description": "Airport retail POS requirement" }
+    },
+
+    {
+      "id": "POS-FR-041",
+      "raw_text": "The POS must support both touchscreen and barcode scanner inputs.",
+      "normalized_text": "Support touchscreen and scanner input",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "support", "modality": "must" },
+      "object": { "primary": "input devices" },
+      "constraint": { "type": "functional", "description": "Airport retail POS requirement" }
+    },
+
+    {
+      "id": "POS-FR-046",
+      "raw_text": "The system should support future integration via APIs.",
+      "normalized_text": "Support API-based integrations",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "support", "modality": "should" },
+      "object": { "primary": "API integrations" },
+      "constraint": { "type": "functional", "description": "Airport retail POS requirement" }
+    },
+
+    {
+      "id": "POS-FR-049",
+      "raw_text": "The POS must be scalable to support additional airport terminals.",
+      "normalized_text": "Scale POS for additional terminals",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "scale", "modality": "must" },
+      "object": { "primary": "system scalability" },
+      "constraint": { "type": "performance", "description": "Airport retail POS requirement" }
+    },
+    {
+      "id": "POS-FR-050",
+      "raw_text": "The system should accommodate future growth in retail outlets.",
+      "normalized_text": "Support future retail expansion",
+      "confidence_score": 0.9,
+      "status": "draft",
+      "action": { "verb": "support", "modality": "should" },
+      "object": { "primary": "future growth" },
+      "constraint": { "type": "performance", "description": "Airport retail POS requirement" }
+    }
+  ]
 }
